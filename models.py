@@ -1,66 +1,80 @@
-import datetime as dt
-from turtle import back
 import sqlalchemy as sql 
 import sqlalchemy.orm as orm 
 import passlib.hash as _hash 
-import database as database 
-
+import sqlalchemy as sql 
+import sqlalchemy.ext.declarative as declarative 
+import sqlalchemy.orm as orm 
+import database 
 
 
 class UserType(database.Base):
 
-    __tablename__ = 'UserType'
-    UserTypeID = sql.Column(sql.Integer,index=True)
-    Description = sql.Column(sql.String)
-    user = orm.relationship('User',back_populates='user_type')
-    donate_transaction =orm.relationship('DonateTransaction')
+    __tablename__ = 'usertype'
 
-class User(database.Base):
+    usertypeid = sql.Column(sql.Integer,primary_key=True,index=True)
+    description = sql.Column(sql.String,nullable=False)
 
+    user = orm.relationship('user',backref='usertype')
+    
 
-    __tablename__ = 'User'
+class Users(database.Base):
 
-    UserID = sql.Column(sql.Integer,primary_key=True,index=True)
-    Email = sql.Column(sql.String,unique=True)
-    Age = sql.Column(sql.Integer,nullable=False)
-    City = sql.Column(sql.String)
-    Suburb = sql.Column(sql.String)
-    Postcode = sql.Column(sql.Integer,nullable=False)
-    UserTypeID = sql.Column(sql.Integer,sql.ForeignKey(UserType.UserTypeID))
+    __tablename__ = 'users'
 
-    user_type = orm.relationship('UserType',back_populates='user')
-    giver = orm.relationship('DonateTransaction',back_populates='user_giver')
-    receiver = orm.relationship('DonateTransaction',back_populates='user_receiver')
+    userid = sql.Column(sql.Integer,primary_key=True,index=True)
+    firstname = sql.Column(sql.String,nullable=False)
+    lastname = sql.Column(sql.String,nullable=False)
+    age = sql.Column(sql.Integer,nullable=False)
+    streetaddress = sql.Column(sql.String,nullable=False)
+    postcode = sql.Column(sql.Integer,nullable=False)
+    usertypeid = sql.Column(sql.Integer,sql.ForeignKey('usertype.usertypeid'))
 
 
+class DonationType:
 
-class DonateType(database.Base):
+    __tablename__ = 'donationtype'
 
-    __tablename__ = 'DonationType'
+    donationtypeid = sql.Column(sql.Integer,primary_key=True,index=True)
+    description = sql.Column(sql.String,nullable=False)
+    donationtransaction = orm.relationship('donationtransaction',backref='donationtype')
 
-    DonationTypeID = sql.Column(sql.Integer,primary_key=True,index=True)
-    Description = sql.Column(sql.Text,nullable=False)
-    Recurring = sql.Column(sql.Boolean,nullable=False)
+    
+class Transaction(database.Base):
+    __tablename__ = 'transaction'
 
-    donate_transaction = orm.relationship('DonateTransaction',back_populates='donate_type')
+    transactionid = sql.Column(sql.Integer,primary_key=True,index=True)
+    dateagreed = sql.Column(sql.Date,nullable=False)
+    giverid = sql.Column(sql.Integer,sql.ForeignKey('users.userid'))
+    receiverid = sql.Column(sql.Integer,sql.ForeignKey('users.userid'))
+
+    completed_transaction = orm.relationship('')
 
 
-class DonateTransaction(database.Base):
+class CompletedTransaction(database.Base):
 
-    __tablename__ = 'DonationTransaction'
+    __tablename__ = 'completedtransaction'
 
-    DonationTransactionID = sql.Column(sql.Integer,primary_key=True,nullable=False)
-    Receiver = sql.Column(sql.Integer,sql.ForeignKey(User.UserID),nullable=False)
-    Giver = sql.Column(sql.Integer,sql.ForeignKey(User.UserID),nullable=False)
-    DonateTypeID = sql.Column(sql.Integer,sql.ForeignKey(DonateType.DonationTypeID))
-    MonetaryValue = sql.Column(sql.Float,nullable=True)
-    Date_Agreed = sql.Column(sql.Date,nullable=False)
-    Date_Delivered = sql.Column(sql.Date,nullable=False)
+    completedtransactionid = sql.Column(sql.Integer,primary_key=True,index=True)
+    transactionid = sql.Column(sql.Integer,sql.ForeignKey('transaction.transactionid'))
+    datecompleted = sql.Column(sql.Date,nullable=False)
 
-    donate_type = orm.relationship('DonateType',back_populates='donate_transaction')
-    user_giver = orm.relationship('User',back_populates='giver')
-    user_receiver = orm.relationship('User',back_populates='receiver')
+
+
+
 
 
     
 
+
+
+
+
+
+
+
+
+
+   
+
+
+    
