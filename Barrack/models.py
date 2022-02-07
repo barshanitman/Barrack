@@ -5,6 +5,14 @@ import sqlalchemy as sql
 import sqlalchemy.ext.declarative as declarative 
 import sqlalchemy.orm as orm 
 import database 
+import passlib.hash
+
+'''
+
+DATABASE SCHEMAS
+
+
+'''
 
 
 class UserType(database.Base):
@@ -13,7 +21,6 @@ class UserType(database.Base):
 
     usertypeid = sql.Column(sql.Integer,primary_key=True,index=True)
     description = sql.Column(sql.String,nullable=False)
-
     user = orm.relationship('Users',backref='usertype')
 
 
@@ -27,27 +34,12 @@ class Users(database.Base):
     age = sql.Column(sql.Integer,nullable=False)
     email = sql.Column(sql.String,nullable=False,unique=True)
     streetaddress = sql.Column(sql.String,nullable=False)
+    suburb = sql.Column(sql.String,nullable=False)
     postcode = sql.Column(sql.Integer,nullable=False)
     usertypeid = sql.Column(sql.Integer,sql.ForeignKey('usertype.usertypeid'))
-
-    password = orm.relationship('Password',backref='users')
+    password = sql.Column(sql.String,nullable=False)
     comment = orm.relationship('Comment',backref='users')
     heartuser = orm.relationship('PostHearts',backref='users')
-
-
-
-
-class Password(database.Base):
-
-    __tablename__ ='password'
-    passwordid = sql.Column(sql.Integer,primary_key=True,index=True)
-    password = sql.Column(sql.String,nullable=False) 
-    userid = sql.Column(sql.Integer,sql.ForeignKey('users.userid'))
-
-
-
-
-
 
 class DonationType(database.Base):
 
