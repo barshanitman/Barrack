@@ -5,3 +5,7 @@ from models import UserType,Users
 
 
 Base.metadata.create_all(engine)
+
+
+
+
