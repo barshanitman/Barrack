@@ -6,6 +6,8 @@ import sqlalchemy.ext.declarative as declarative
 import sqlalchemy.orm as orm 
 import database 
 import passlib.hash
+from sqlalchemy.sql import func
+
 
 '''
 
@@ -79,7 +81,7 @@ class Post(database.Base):
     postid = sql.Column(sql.Integer,primary_key=True,index=True) 
     description = sql.Column(sql.Text,nullable=False)
     userid = sql.Column(sql.Integer,sql.ForeignKey('users.userid'))
-    date = sql.Column(sql.Date,nullable=False)
+    date = sql.Column(sql.DateTime(timezone=True),nullable=False)
 
     comment = orm.relationship('Comment',backref='post')
 
@@ -92,7 +94,7 @@ class Comment(database.Base):
     description = sql.Column(sql.Text,nullable=False)
     postid = sql.Column(sql.Integer,sql.ForeignKey('post.postid'))
     usercommentid = sql.Column(sql.Integer,sql.ForeignKey('users.userid'))
-    date = sql.Column(sql.Date,nullable=False) 
+    date = sql.Column(sql.DateTime(timezone=True),default=func.now()) 
     commenthearts = orm.relationship('CommentHearts',backref='comment')
 
 
@@ -111,4 +113,5 @@ class CommentHearts(database.Base):
 
     commentheartsid = sql.Column(sql.Integer,primary_key=True,index=True)
     commentid = sql.Column(sql.Integer,sql.ForeignKey('comment.commentid'))
+    date = sql.Column(sql.Date,default=func.now())
 
